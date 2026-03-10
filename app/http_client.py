@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import time
 from typing import Any, Dict, Optional, Union
 
 import requests
@@ -13,8 +14,12 @@ class Client:
         self.session = requests.Session()
 
     def refresh_oauth2(self) -> None:
-        self.oauth2_token = OAuth2Token(access_token="fresh-token", expires_at=10**10)
-
+        if isinstance(self.oauth2_token, dict):
+            self.oauth2_token["access_token"] = "fresh-token"
+            self.oauth2_token["expires_at"] = 10**10
+        else:
+            self.oauth2_token = OAuth2Token(access_token="fresh-token", expires_at=10**10)
+    
     def request(
         self,
         method: str,
@@ -29,11 +34,23 @@ class Client:
         if api:
             if not self.oauth2_token or (
                 isinstance(self.oauth2_token, OAuth2Token) and self.oauth2_token.expired
+            ) or(
+                isinstance(self.oauth2_token, dict) and (
+                    ("expires_at" not in self.oauth2_token or isinstance(self.oauth2_token["expires_at"], int)) and 
+                    ("access_token" not in self.oauth2_token or isinstance(self.oauth2_token["access_token"], str))
+                ) and
+                self.oauth2_token.get("expires_at", 0) <= int(time.time())
             ):
                 self.refresh_oauth2()
-
+            
+                
             if isinstance(self.oauth2_token, OAuth2Token):
                 headers["Authorization"] = self.oauth2_token.as_header()
+            elif isinstance(self.oauth2_token, dict) and (
+                ("expires_at" not in self.oauth2_token or isinstance(self.oauth2_token["expires_at"], int)) and 
+                ("access_token" not in self.oauth2_token or isinstance(self.oauth2_token["access_token"], str))
+            ):
+                headers["Authorization"] = f"Bearer {self.oauth2_token['access_token']}"
 
         req = requests.Request(method=method, url=f"https://example.com{path}", headers=headers)
         prepared = self.session.prepare_request(req)
