@@ -1,64 +1,122 @@
-# AI Experts Assignment (Python)
+# 🐍 Python Project: App & Test Suite
 
-This assignment evaluates your ability to:
+This project contains a Python application with a complete automated test suite using `pytest` and `pytest-cov`.
 
-- set up a small Python project to run reliably (locally + in Docker),
-- pin dependencies for reproducible installs,
-- write focused tests to reproduce a bug,
-- implement a minimal, reviewable fix.
+## 📁 Project Structure
 
-## What you will do
+- `app/`: Source code and business logic.
+    
+- `test/`: Unit and integration tests.
+    
+- `Dockerfile`: Container configuration for isolated testing.
+    
+- `requirements.txt`: Project dependencies (Requests, Dateutil, Pytest).
+    
 
-### 1) Dockerfile (required)
+---
 
-Create a `Dockerfile` so the project can run the test suite in a non-interactive, CI-style environment.
+## 📥 Cloning and Setup
 
-Requirements:
+Before running tests, clone the repository to your local machine and navigate into the project root:
 
-- requirements.txt exists and is used during build (pip install -r requirements.txt)
-- pytest must be included/pinned in requirements.txt
-- The image must run tests by default (use: `CMD ["python", "-m", "pytest", "-v"]`).
-- The build must install dependencies from `requirements.txt`.
 
-### 2) requirements.txt (required)
 
-Create a `requirements.txt` with pinned versions, using this format:
+```Bash
+# Clone the repository
+git clone https://github.com/Kaleab-Hailemeskel/ai-experts-assignment-3-fork.git
 
-- `package==x.y.z`
+# Enter the project directory
+cd ai-experts-assignment-3-fork
+```
+## 🚀 Getting Started
 
-### 3) README updates (required)
+### 1. Local Development
 
-Update this README to include:
+Use this method if you have Python 3.11+ installed and want to run tests quickly during development.
 
-- how to run the tests locally,
-- how to build and run tests with Docker.
+**Set up your environment:**
 
-### 4) Find + fix a bug (required)
 
-There is a bug somewhere in this repository.
 
-Your tasks:
+```Bash
+# Create a virtual environment
+python -m venv .venv
 
-- Identify the bug.
-- Apply the smallest possible fix to make the tests pass.
-- Keep the change minimal and reviewable (no refactors).
+# Activate it
+# On Windows: .venv\Scripts\activate
+# On macOS/Linux: source .venv/bin/activate
 
-## Constraints
+# Install dependencies
+pip install -r requirements.txt
+```
+**Run tests:**
 
-- Keep changes minimal and reviewable.
-- Do not refactor unrelated code.
-- Do not introduce extra tooling unless required.
-- You may add tests and the smallest code change needed to fix the bug.
+Bash
 
-### 5) EXPLANATION.md (required)
+```
+# Run all tests
+pytest
 
-Create `EXPLANATION.md` (max 250 words) containing:
+# Run tests with in a verbose 
+pytest test/ -v
 
-- **What was the bug?**
-- **Why did it happen?**
-- **Why does your fix solve it?**
-- **One realistic case / edge case your tests still don’t cover**
+# Run tests with print command for custome debugging
+pytest test/ -s
+```
+---
 
-## Submission
+### 2. Docker Execution (Recommended)
 
-- Submit a public GitHub repository URL containing your solution to the Google form link provided.
+Use this method to ensure your tests run in an environment identical to production, regardless of your local OS.
+
+**Build the image:**
+
+```Bash
+docker build -t python-test-runner .
+```
+
+**Run the tests:**
+
+```Bash
+# The container will automatically run pytest and then remove itself (--rm)
+docker run --rm python-test-runner
+```
+
+**Extracting Coverage Reports:** If you want to save the coverage results to your local machine from the container:
+
+```Bash
+docker run --rm -v $(pwd):/app python-test-runner pytest --cov=app --cov-report=html
+```
+
+_This will create an `htmlcov/` folder in your project root that you can open in a browser._
+
+---
+
+## 🧪 Testing Details
+
+The test suite is configured to:
+
+1. **Validate Logic:** Ensure functions in `app/` behave as expected.
+    
+2. **Check API Interactions:** Tests using the `requests` library.
+    
+3. **Date Parsing:** Validating ISO strings via `python-dateutil`.
+    
+4. **Enforce Coverage:** Aims for high code coverage visibility via `pytest-cov`.
+    
+
+---
+
+## 🛠 Troubleshooting
+**Permission Denied (Docker):** If you get a "permission denied" error when trying to connect to the Docker daemon, you likely need `root` privileges. Use `sudo`:
+
+
+
+```Bash
+sudo docker build -t python-test-runner .
+sudo docker run --rm python-test-runner
+```
+
+- **ModuleNotFoundError:** If running locally without a venv, ensure your `PYTHONPATH` includes the root directory: `export PYTHONPATH=$PYTHONPATH:.`
+    
+- **Docker Build Fail:** Ensure you are in the root directory (where the `Dockerfile` is located) when running the build command.
