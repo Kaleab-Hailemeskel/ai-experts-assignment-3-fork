@@ -20,4 +20,4 @@ ENV PYTHONPATH=/app
 
 # 7. The command to run when the container starts
 # We include --cov=app to see that coverage report immediately
-CMD ["pytest", "tests/", "-v"]
+CMD ["pytest", "-v"]

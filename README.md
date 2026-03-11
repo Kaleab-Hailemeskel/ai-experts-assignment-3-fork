@@ -82,14 +82,6 @@ docker build -t python-test-runner .
 docker run --rm python-test-runner
 ```
 
-**Extracting Coverage Reports:** If you want to save the coverage results to your local machine from the container:
-
-```Bash
-docker run --rm -v $(pwd):/app python-test-runner pytest --cov=app --cov-report=html
-```
-
-_This will create an `htmlcov/` folder in your project root that you can open in a browser._
-
 ---
 
 ## 🧪 Testing Details
@@ -108,9 +100,7 @@ The test suite is configured to:
 ---
 
 ## 🛠 Troubleshooting
-**Permission Denied (Docker):** If you get a "permission denied" error when trying to connect to the Docker daemon, you likely need `root` privileges. Use `sudo`:
-
-
+- **Permission Denied (Docker):** If you get a "permission denied" error when trying to connect to the Docker daemon, you likely need `root` privileges. Use `sudo`:
 
 ```Bash
 sudo docker build -t python-test-runner .
